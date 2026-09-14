@@ -1,11 +1,22 @@
-.env
+__pycache__/
+*.py[cod]
+*$py.class
+
 .venv/
 venv/
-__pycache__/
-*.pyc
+env/
+ENV/
 
-output/*
-temp/*
-uploads/*
+.env
+
+output/
+temp/
+uploads/
+
+*.mp4
+*.webm
+*.wav
+*.mp3
 
 .DS_Store
+Thumbs.db
