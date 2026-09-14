@@ -1,172 +1,168 @@
 <!DOCTYPE html>
 <html lang="ur" dir="rtl">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Islamic Video Maker</title>
 
-    <link rel="stylesheet"
-          href="/static/style.css">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <div class="header">
-
-        <h1>اسلامک ویڈیو میکر</h1>
-
-        <p>
-            حدیث، ترجمہ اور وضاحت سے ویڈیو بنائیں
-        </p>
-
-    </div>
+        <header class="header">
+            <h1>🕌 Islamic Video Maker</h1>
+            <p>Hadith اور Islamic Content سے ویڈیو بنائیں</p>
+        </header>
 
 
-    <div class="card">
+        <section class="card">
 
-        <label>ویڈیو کا موضوع</label>
+            <label for="hadith">
+                📖 عربی حدیث
+            </label>
 
-        <input
-            id="topic"
-            type="text"
-            placeholder="مثلاً: والدین کے ساتھ حسن سلوک"
-        >
-
-
-        <label>عربی حدیث</label>
-
-        <textarea
-            id="arabic"
-            placeholder="یہاں مستند عربی حدیث لکھیں..."
-        ></textarea>
+            <textarea
+                id="hadith"
+                placeholder="یہاں عربی حدیث لکھیں..."
+            ></textarea>
 
 
-        <label>اردو ترجمہ</label>
+            <label for="translation">
+                🌙 اردو ترجمہ
+            </label>
 
-        <textarea
-            id="translation"
-            placeholder="یہاں مستند اردو ترجمہ لکھیں..."
-        ></textarea>
-
-
-        <label>مختصر وضاحت</label>
-
-        <textarea
-            id="explanation"
-            placeholder="یہاں اپنی تعلیمی وضاحت لکھیں..."
-        ></textarea>
+            <textarea
+                id="translation"
+                placeholder="یہاں حدیث کا اردو ترجمہ لکھیں..."
+            ></textarea>
 
 
-        <label>آواز</label>
+            <label for="explanation">
+                📝 وضاحت
+            </label>
 
-        <select id="voice">
-
-            <option value="ur-PK-AsadNeural">
-                اردو مردانہ آواز
-            </option>
-
-            <option value="ur-PK-UzmaNeural">
-                اردو خواتین کی آواز
-            </option>
-
-            <option value="ar-SA-HamedNeural">
-                عربی مردانہ آواز
-            </option>
-
-            <option value="ar-SA-ZariyahNeural">
-                عربی خواتین کی آواز
-            </option>
-
-        </select>
+            <textarea
+                id="explanation"
+                placeholder="یہاں حدیث کی مختصر وضاحت لکھیں..."
+            ></textarea>
 
 
-        <label>Background Image URL</label>
+            <label for="voice">
+                🎙️ آواز منتخب کریں
+            </label>
 
-        <input
-            id="background"
-            type="url"
-            placeholder="https://example.com/image.jpg"
-        >
+            <select id="voice">
 
-        <p class="hint">
-            صرف ایسی تصویر استعمال کریں جس کے استعمال کی اجازت ہو۔
-        </p>
+                <option value="ur-PK-UzmaNeural">
+                    اردو — خواتین کی آواز
+                </option>
 
+                <option value="ur-PK-AsadNeural">
+                    اردو — مردانہ آواز
+                </option>
 
-        <button
-            id="generateBtn"
-            onclick="generateVideo()"
-        >
-            🎬 ویڈیو بنائیں
-        </button>
+                <option value="ar-SA-ZariyahNeural">
+                    عربی — خواتین کی آواز
+                </option>
 
+                <option value="ar-SA-HamedNeural">
+                    عربی — مردانہ آواز
+                </option>
 
-        <div
-            id="status"
-            class="status"
-        ></div>
-
-    </div>
+            </select>
 
 
-    <div
-        id="resultCard"
-        class="card result"
-        style="display:none;"
-    >
+            <label for="background">
+                🖼️ Background Image URL
+            </label>
 
-        <h2>آپ کی ویڈیو تیار ہے</h2>
-
-        <video
-            id="videoPreview"
-            controls
-            playsinline
-        ></video>
-
-
-        <div class="buttons">
-
-            <a
-                id="downloadBtn"
-                class="download"
-                download
+            <input
+                type="text"
+                id="background"
+                placeholder="اختیاری — تصویر کا URL یہاں ڈالیں"
             >
-                ⬇ MP4 Download
-            </a>
 
 
             <button
-                onclick="startRecording()"
+                id="generateBtn"
+                class="generate-btn"
+                onclick="generateVideo()"
             >
-                🔴 Screen Recording شروع کریں
+                🎬 ویڈیو بنائیں
             </button>
 
 
-            <button
-                onclick="stopRecording()"
-            >
-                ⏹ Recording بند کریں
-            </button>
+            <div id="status" class="status"></div>
 
-        </div>
+        </section>
 
-        <p id="recordStatus"></p>
+
+        <section
+            id="resultSection"
+            class="card result-card"
+            style="display:none;"
+        >
+
+            <h2>🎥 آپ کی ویڈیو تیار ہے</h2>
+
+            <video
+                id="videoPreview"
+                controls
+                playsinline
+            ></video>
+
+
+            <div class="buttons">
+
+                <a
+                    id="downloadBtn"
+                    class="download-btn"
+                    href="#"
+                    download
+                >
+                    ⬇️ MP4 Download کریں
+                </a>
+
+
+                <button
+                    class="record-btn"
+                    onclick="startRecording()"
+                >
+                    🔴 Screen Recording شروع کریں
+                </button>
+
+
+                <button
+                    class="stop-btn"
+                    onclick="stopRecording()"
+                >
+                    ⏹️ Recording بند کریں
+                </button>
+
+            </div>
+
+
+            <p id="recordingStatus"></p>
+
+        </section>
+
+
+        <footer>
+
+            <p>
+                Islamic Video Maker — Original Educational Content
+            </p>
+
+        </footer>
 
     </div>
 
-</div>
 
-
-<script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
-
 </html>
