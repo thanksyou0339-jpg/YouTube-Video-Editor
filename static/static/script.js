@@ -4,128 +4,84 @@ let recordedChunks = [];
 
 async function generateVideo() {
 
-    const button =
-        document.getElementById("generateBtn");
+    const hadith = document.getElementById("hadith").value.trim();
+    const translation = document.getElementById("translation").value.trim();
+    const explanation = document.getElementById("explanation").value.trim();
+    const voice = document.getElementById("voice").value;
+    const background = document.getElementById("background").value.trim();
 
-    const status =
-        document.getElementById("status");
-
-
-    const topic =
-        document.getElementById("topic").value.trim();
-
-    const arabic =
-        document.getElementById("arabic").value.trim();
-
-    const translation =
-        document.getElementById("translation").value.trim();
-
-    const explanation =
-        document.getElementById("explanation").value.trim();
-
-    const voice =
-        document.getElementById("voice").value;
-
-    const background =
-        document.getElementById("background").value.trim();
+    const status = document.getElementById("status");
+    const resultSection = document.getElementById("resultSection");
+    const videoPreview = document.getElementById("videoPreview");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const generateBtn = document.getElementById("generateBtn");
 
 
-    if (!arabic && !translation && !explanation) {
+    if (!hadith && !translation && !explanation) {
 
-        status.innerText =
-            "براہ کرم حدیث، ترجمہ یا وضاحت درج کریں۔";
+        status.innerText = "⚠️ براہِ کرم حدیث یا متن ضرور لکھیں۔";
 
         return;
     }
 
 
-    button.disabled = true;
-
-    button.innerText =
-        "⏳ ویڈیو تیار ہو رہی ہے...";
-
-    status.innerText =
-        "براہ کرم انتظار کریں، ویڈیو بنائی جا رہی ہے۔";
+    generateBtn.disabled = true;
+    generateBtn.innerText = "⏳ ویڈیو بن رہی ہے...";
+    status.innerText = "⏳ براہِ کرم انتظار کریں، ویڈیو تیار کی جا رہی ہے...";
+    resultSection.style.display = "none";
 
 
     try {
 
-        const response =
-            await fetch("/generate", {
+        const response = await fetch("/generate", {
 
-                method: "POST",
+            method: "POST",
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                body: JSON.stringify({
+            body: JSON.stringify({
 
-                    topic: topic,
+                hadith: hadith,
+                translation: translation,
+                explanation: explanation,
+                voice: voice,
+                background: background
 
-                    arabic: arabic,
+            })
 
-                    translation: translation,
-
-                    explanation: explanation,
-
-                    voice: voice,
-
-                    background: background
-
-                })
-
-            });
+        });
 
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
 
-        if (!data.success) {
+        if (!response.ok || !data.success) {
 
             throw new Error(
-                data.error ||
-                "Video generation failed"
+                data.error || "ویڈیو بنانے میں مسئلہ پیش آیا۔"
             );
 
         }
 
 
-        const video =
-            document.getElementById(
-                "videoPreview"
-            );
+        videoPreview.src = data.video_url;
 
-        const resultCard =
-            document.getElementById(
-                "resultCard"
-            );
+        downloadBtn.href = data.video_url;
 
-        const download =
-            document.getElementById(
-                "downloadBtn"
-            );
+        downloadBtn.download = "islamic-video.mp4";
 
 
-        video.src =
-            data.video;
+        resultSection.style.display = "block";
 
-        download.href =
-            data.video;
+        status.innerText = "✅ ویڈیو کامیابی سے تیار ہو گئی۔";
 
 
-        resultCard.style.display =
-            "block";
+        resultSection.scrollIntoView({
 
-
-        status.innerText =
-            "✅ ویڈیو کامیابی سے تیار ہو گئی۔";
-
-
-        resultCard.scrollIntoView({
             behavior: "smooth"
+
         });
 
 
@@ -134,107 +90,78 @@ async function generateVideo() {
         console.error(error);
 
         status.innerText =
-            "❌ مسئلہ: " +
-            error.message;
+            "❌ مسئلہ: " + error.message;
 
     } finally {
 
-        button.disabled = false;
+        generateBtn.disabled = false;
 
-        button.innerText =
-            "🎬 ویڈیو بنائیں";
+        generateBtn.innerText = "🎬 ویڈیو بنائیں";
+
     }
+
 }
 
 
 
 async function startRecording() {
 
-    const video =
-        document.getElementById(
-            "videoPreview"
-        );
+    const video = document.getElementById("videoPreview");
 
-    const status =
-        document.getElementById(
-            "recordStatus"
-        );
+    const recordingStatus =
+        document.getElementById("recordingStatus");
 
 
     if (!video.src) {
 
-        status.innerText =
-            "پہلے ویڈیو تیار کریں۔";
+        recordingStatus.innerText =
+            "⚠️ پہلے ویڈیو تیار کریں۔";
 
         return;
+
     }
 
 
     try {
 
-        await video.play();
+        const stream = video.captureStream();
 
-    } catch (e) {
-
-        status.innerText =
-            "پہلے ویڈیو کے Play بٹن کو دبائیں۔";
-
-        return;
-    }
+        recordedChunks = [];
 
 
-    const stream =
-        video.captureStream
-            ? video.captureStream()
-            : video.mozCaptureStream();
+        mediaRecorder = new MediaRecorder(
 
-
-    if (!stream) {
-
-        status.innerText =
-            "اس Browser میں Screen/Video recording support دستیاب نہیں۔";
-
-        return;
-    }
-
-
-    recordedChunks = [];
-
-
-    mediaRecorder =
-        new MediaRecorder(
             stream,
+
             {
-                mimeType:
-                    "video/webm"
+                mimeType: "video/webm"
             }
+
         );
 
 
-    mediaRecorder.ondataavailable =
-        function(event) {
+        mediaRecorder.ondataavailable = function(event) {
 
             if (event.data.size > 0) {
 
-                recordedChunks.push(
-                    event.data
-                );
+                recordedChunks.push(event.data);
 
             }
 
         };
 
 
-    mediaRecorder.onstop =
-        function() {
+        mediaRecorder.onstop = function() {
 
-            const blob =
-                new Blob(
-                    recordedChunks,
-                    {
-                        type: "video/webm"
-                    }
-                );
+            const blob = new Blob(
+
+                recordedChunks,
+
+                {
+                    type: "video/webm"
+                }
+
+            );
 
 
             const url =
@@ -251,35 +178,41 @@ async function startRecording() {
                 "islamic-video-recording.webm";
 
 
+            document.body.appendChild(a);
+
             a.click();
 
+            document.body.removeChild(a);
 
-            status.innerText =
+
+            URL.revokeObjectURL(url);
+
+
+            recordingStatus.innerText =
                 "✅ Recording محفوظ ہو گئی۔";
 
         };
 
 
-    mediaRecorder.start();
+        mediaRecorder.start();
 
 
-    status.innerText =
-        "🔴 Recording جاری ہے...";
+        video.play();
 
 
-    video.onended =
-        function() {
+        recordingStatus.innerText =
+            "🔴 Recording شروع ہو گئی...";
 
-            if (
-                mediaRecorder &&
-                mediaRecorder.state !== "inactive"
-            ) {
 
-                mediaRecorder.stop();
+    } catch (error) {
 
-            }
+        console.error(error);
 
-        };
+        recordingStatus.innerText =
+            "❌ Recording شروع نہیں ہو سکی۔";
+
+    }
+
 }
 
 
@@ -292,6 +225,13 @@ function stopRecording() {
     ) {
 
         mediaRecorder.stop();
+
+    } else {
+
+        document.getElementById(
+            "recordingStatus"
+        ).innerText =
+            "⚠️ ابھی کوئی recording نہیں چل رہی۔";
 
     }
 
