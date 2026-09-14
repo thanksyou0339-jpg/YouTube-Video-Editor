@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Islamic Video Maker</title>
+
+    <link rel="stylesheet"
+          href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>اسلامک ویڈیو میکر</h1>
+
+        <p>
+            حدیث، ترجمہ اور وضاحت سے ویڈیو بنائیں
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <label>ویڈیو کا موضوع</label>
+
+        <input
+            id="topic"
+            type="text"
+            placeholder="مثلاً: والدین کے ساتھ حسن سلوک"
+        >
+
+
+        <label>عربی حدیث</label>
+
+        <textarea
+            id="arabic"
+            placeholder="یہاں مستند عربی حدیث لکھیں..."
+        ></textarea>
+
+
+        <label>اردو ترجمہ</label>
+
+        <textarea
+            id="translation"
+            placeholder="یہاں مستند اردو ترجمہ لکھیں..."
+        ></textarea>
+
+
+        <label>مختصر وضاحت</label>
+
+        <textarea
+            id="explanation"
+            placeholder="یہاں اپنی تعلیمی وضاحت لکھیں..."
+        ></textarea>
+
+
+        <label>آواز</label>
+
+        <select id="voice">
+
+            <option value="ur-PK-AsadNeural">
+                اردو مردانہ آواز
+            </option>
+
+            <option value="ur-PK-UzmaNeural">
+                اردو خواتین کی آواز
+            </option>
+
+            <option value="ar-SA-HamedNeural">
+                عربی مردانہ آواز
+            </option>
+
+            <option value="ar-SA-ZariyahNeural">
+                عربی خواتین کی آواز
+            </option>
+
+        </select>
+
+
+        <label>Background Image URL</label>
+
+        <input
+            id="background"
+            type="url"
+            placeholder="https://example.com/image.jpg"
+        >
+
+        <p class="hint">
+            صرف ایسی تصویر استعمال کریں جس کے استعمال کی اجازت ہو۔
+        </p>
+
+
+        <button
+            id="generateBtn"
+            onclick="generateVideo()"
+        >
+            🎬 ویڈیو بنائیں
+        </button>
+
+
+        <div
+            id="status"
+            class="status"
+        ></div>
+
+    </div>
+
+
+    <div
+        id="resultCard"
+        class="card result"
+        style="display:none;"
+    >
+
+        <h2>آپ کی ویڈیو تیار ہے</h2>
+
+        <video
+            id="videoPreview"
+            controls
+            playsinline
+        ></video>
+
+
+        <div class="buttons">
+
+            <a
+                id="downloadBtn"
+                class="download"
+                download
+            >
+                ⬇ MP4 Download
+            </a>
+
+
+            <button
+                onclick="startRecording()"
+            >
+                🔴 Screen Recording شروع کریں
+            </button>
+
+
+            <button
+                onclick="stopRecording()"
+            >
+                ⏹ Recording بند کریں
+            </button>
+
+        </div>
+
+        <p id="recordStatus"></p>
+
+    </div>
+
+</div>
+
+
+<script src="/static/script.js"></script>
+
+</body>
+
+</html>
